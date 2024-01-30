@@ -40,7 +40,7 @@ app.use(function (request, response, next) {
   response.locals.messages = request.flash();
   next();
 });
-
+const { Op } = require("sequelize");
 passport.use(
   new LocalStrategy(
     {
@@ -408,7 +408,10 @@ app.get(
       });
 
       // Render the EJS view with the retrieved sports sessions
-      res.render("cancelled-sports", { sportsSessions, userName: userId });
+      res.render("cancelled-sports", {
+        sportsSessions,
+        userName: req.user.firstName,
+      });
     } catch (error) {
       console.error("Error retrieving sports sessions:", error);
       res.status(500).send("Internal Server Error");
@@ -490,13 +493,42 @@ app.post(
 app.get("/adminDashboard", connectEnsureLogin.ensureLoggedIn(), (req, res) => {
   if (req.isAuthenticated() && req.user.isAdmin) {
     // User is an admin, proceed to the admin dashboard
-    res.render("sample");
+    res.render("admin-dashboard", {
+      sportsSessions: "",
+      csrfToken: req.csrfToken(),
+    });
   } else {
     // User is not an admin, redirect to a different page or show an error
     req.flash("error", "you are not a admin");
     return res.redirect("/admin/login"); // Redirect to home page for non-admin users
   }
 });
+
+// Your route handler
+app.post("/sports-between-dates", async (req, res) => {
+  const { startDate, endDate } = req.body;
+
+  try {
+    // Query the database for sports sessions between the given dates
+    const sportsSessions = await Sports.findAll({
+      where: {
+        date: {
+          [Op.between]: [startDate, endDate],
+        },
+      },
+    });
+
+    // Render the EJS template with the sports sessions
+    res.render("admin-dashboard", {
+      sportsSessions,
+      csrfToken: req.csrfToken(),
+    });
+  } catch (error) {
+    console.error("Error fetching sports sessions:", error);
+    res.status(500).send("Internal server error");
+  }
+});
+
 //for listening the port
 module.exports = app;
 
