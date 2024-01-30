@@ -390,8 +390,31 @@ app.get(
     }
   }
 );
-//for cancel the match
+app.get(
+  "/cancelled-sports",
+  connectEnsureLogin.ensureLoggedIn(),
+  async (req, res) => {
+    try {
+      // Retrieve the user ID from the session
+      const userId = req.user.id;
 
+      // Query to get sports sessions for the logged-in user
+      const sportsSessions = await Sports.findAll({
+        where: {
+          userId: userId,
+          isCancelled: true,
+          // Optional: Add additional conditions as needed
+        },
+      });
+
+      // Render the EJS view with the retrieved sports sessions
+      res.render("cancelled-sports", { sportsSessions, userName: userId });
+    } catch (error) {
+      console.error("Error retrieving sports sessions:", error);
+      res.status(500).send("Internal Server Error");
+    }
+  }
+);
 //for signout
 app.get("/signout", (req, res, next) => {
   req.logout((err) => {
