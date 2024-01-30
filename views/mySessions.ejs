@@ -62,7 +62,7 @@
                         <a class="nav-link" href="/joined-sports">My upcoming Matches</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Cancelled Matches</a>
+                        <a class="nav-link" href="/cancelled-sports">Cancelled Matches</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/signout">Sign Out</a>
@@ -85,9 +85,11 @@
           <h1>My Sports Sessions</h1>
         <br>
         <br>
+        <% const today = new Date(); %>
           <% if (sportsSessions.length > 0) { %>
             <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
                 <% sportsSessions.forEach(session => { %>
+                    <% const matchDate = new Date(session.date + 'T' + session.time); %>
                     <div class="card">
                         <center><h3><%= session.SportsName %></h3></center>
                         <p><strong>Date:</strong> <%= session.date %></p>
@@ -95,9 +97,15 @@
                         <p><strong>Additional players:</strong><%= session.addPlayers %></p>
                         <p><strong>Venue:</strong> <%= session.venue %></p>
                         <!-- Add more details as needed -->
+                        <% if(today>matchDate){ %>
+                            <div class="alert alert-danger">
+                                <p>Match has already occurred</p>
+                            </div>
+                        <% } else { %>
                         <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#cancelModal<%= session.id %>">
                             Cancel the match
                         </button>
+                    <% } %>
                     </div>
                     <!-- Modal -->
 <div class="modal fade" id="cancelModal<%= session.id %>" tabindex="-1" aria-labelledby="cancelModalLabel" aria-hidden="true">
