@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sports Scheduler</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <meta name="csrf-token" content="<%= csrfToken %>">
+    <style>
+        body {
+            padding-top: 60px; /* Adjust the padding based on your navigation bar height */
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Sports Scheduler</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                <ul class="navbar-nav">
+                    <!-- Add the following li to display the username -->
+                    <li class="nav-item">
+                        <span class="nav-link" id="usernamePlaceholder">Welcome, <span id="username"></span></span>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/check">Create Session</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/sportsSessions">All Matches</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/mySessions">My Matches</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/cancelled-sports">Cancelled Matches</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/sign-out">Sign Out</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container mt-5">
+        <h1>Welcome to the Sports Scheduler</h1>
+        <!-- Your additional content goes here -->
+        <% if(messages && messages.error && messages.error.length > 0)  { %>
+            <% for(var i=0; i<messages.error.length; i++) { %>
+              <div class="alert alert-success">
+                     <%= messages.error[i] %>
+                  </div>
+            <% } %>
+          <% } %>
+        <form action="/sports-between-dates" method="post">
+            <input type="date" name="startDate">
+            <h2>To</h2>
+            <input type="date" name="endDate">
+            <input type="hidden" name ="_csrf" value="<%= csrfToken %>">
+            <br>
+            <center><button type="submit">Submit</button></center>
+        </form>
+    </div>
+    <br>
+    <br>
+      <% if (sportsSessions.length > 0) { %>
+        <h1>Sports Sessions Between Dates</h1>
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
+            <% sportsSessions.forEach(session => { %>
+                <% const matchDate = new Date(session.date + 'T' + session.time); %>
+                <div class="card">
+                    <center><h3><%= session.SportsName %></h3></center>
+                    <p><strong>Date:</strong> <%= session.date %></p>
+                    <p><strong>Time:</strong> <%= session.time %></p>
+                    <p><strong>Additional players:</strong><%= session.addPlayers %></p>
+                    <p><strong>Venue:</strong> <%= session.venue %></p>
+                    <!-- Add more details as needed -->
+                </div>
+            <% }); %>
+        </div>
+      <% } else { %>
+        <p>No sports sessions found between the selected dates.</p>
+      <% } %>
+    <!-- Bootstrap JS and Popper.js (required for Bootstrap components) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Add your script to set the username -->
+</body>
+</html>
