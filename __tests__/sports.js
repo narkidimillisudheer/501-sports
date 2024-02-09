@@ -132,7 +132,7 @@ describe("sports Test Suite", () => {
       lastname: "User",
       email: "admin@example.com",
       password: "adminpassword",
-      _csrf: extractCsrfToken(res), // Adjust as needed
+      _csrf: extractCsrfToken(res),
     });
 
     expect(adminSignupResponse.statusCode).toBe(302); // Check for successful admin sign-up
@@ -142,53 +142,45 @@ describe("sports Test Suite", () => {
     const adminLoginResponse = await agent.post("/admin/loginsubmit").send({
       email: "admin@example.com",
       password: "adminpassword",
-      _csrf: extractCsrfToken(res1), // Adjust as needed
+      _csrf: extractCsrfToken(res1),
     });
 
     expect(adminLoginResponse.statusCode).toBe(302); // Check for successful admin login
   });
 
-  // test("Admin Access to Admin Dashboard", async () => {
-  //   // Login as an admin
-  //   let res = await agent.get("/admin/login");
-  //   const adminLoginResponse = await agent.post("/admin/loginsubmit").send({
-  //     email: "admin@example.com",
-  //     password: "adminpassword",
-  //     _csrf: extractCsrfToken(res), // Adjust as needed
-  //   });
+  test("Admin Access to Admin Dashboard", async () => {
+    // Login as an admin
+    let res = await agent.get("/admin/login");
+    const adminLoginResponse = await agent.post("/admin/loginsubmit").send({
+      email: "admin@example.com",
+      password: "adminpassword",
+      _csrf: extractCsrfToken(res),
+    });
 
-  //   expect(adminLoginResponse.statusCode).toBe(302);
+    expect(adminLoginResponse.statusCode).toBe(302);
+    expect(adminLoginResponse.header.location).toBe("/adminDashboard");
+  });
 
-  //   // Access admin dashboard
-  //   const adminDashboardResponse = await agent
-  //     .get("/adminDashboard")
-  //     .set("Cookie", adminLoginResponse.headers["set-cookie"]);
+  test("Filter Sports Sessions Between Dates", async () => {
+    // Login as an admin
+    let res = await agent.get("/admin/login");
+    const adminLoginResponse = await agent.post("/admin/loginsubmit").send({
+      email: "admin@example.com",
+      password: "adminpassword",
+      _csrf: extractCsrfToken(res),
+    });
 
-  //   expect(adminDashboardResponse.statusCode).toBe(200); // Check for successful access to admin dashboard
-  // });
+    expect(adminLoginResponse.statusCode).toBe(302);
+    let res1 = await agent.get("/adminDashboard");
+    // Send a POST request to filter sports sessions between dates
+    const filterSessionsResponse = await agent
+      .post("/sports-between-dates")
+      .send({
+        startDate: "2024-02-01",
+        endDate: "2024-02-15",
+        _csrf: extractCsrfToken(res1),
+      });
 
-  // test("Filter Sports Sessions Between Dates", async () => {
-  //   // Login as an admin
-  //   let res = await agent.get("/admin/login");
-  //   const adminLoginResponse = await agent.post("/admin/loginsubmit").send({
-  //     email: "admin@example.com",
-  //     password: "adminpassword",
-  //     _csrf: extractCsrfToken(res), // Adjust as needed
-  //   });
-
-  //   expect(adminLoginResponse.statusCode).toBe(302);
-
-  //   // Send a POST request to filter sports sessions between dates
-  //   const filterSessionsResponse = await agent
-  //     .post("/sports-between-dates")
-  //     .send({
-  //       startDate: "2024-02-01",
-  //       endDate: "2024-02-15",
-  //       _csrf: extractCsrfToken(res), // Adjust as needed
-  //     });
-
-  //   expect(filterSessionsResponse.statusCode).toBe(200); // Check for successful filtering of sessions
-  // });
-
-  // Add more test cases for other functionalities as needed
+    expect(filterSessionsResponse.statusCode).toBe(200); // Check for successful filtering of sessions
+  });
 });
