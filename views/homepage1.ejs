@@ -8,20 +8,18 @@
     <meta name="csrf-token" content="<%= csrfToken %>">
     <style>
         body {
-            padding-top: 60px; /* Adjust the padding based on your navigation bar height */
+            padding-top: 60px; 
         }
-
-        /* Center the form inputs */
         center {
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 80vh; /* Adjust the height as needed */
+            height: 80vh; 
         }
 
-        /* Add styling effects to input tags */
+        
         form {
-            max-width: 400px; /* Adjust the max-width as needed */
+            max-width: 400px; 
             margin: auto;
         }
 
@@ -103,7 +101,6 @@
     <!-- Main Content -->
     <div class="container mt-5">
         <h1>Welcome to the Sports Scheduler</h1>
-        <!-- Your additional content goes here -->
         <% if(messages && messages.error && messages.error.length > 0)  { %>
             <% for(var i=0; i<messages.error.length; i++) { %>
               <div class="alert alert-success">
