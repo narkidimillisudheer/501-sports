@@ -1,4 +1,4 @@
-const express = require("express");
+const express = require("express"); //for importing the express package
 const app = express();
 const bodyparser = require("body-parser");
 app.use(bodyparser.json());
@@ -309,7 +309,6 @@ app.post("/join-session", async (req, res) => {
     },
   });
 
-  // Returns true if the user has joined the session, false otherwise
   try {
     // Find the session by ID
     if (!userSession) {
@@ -324,12 +323,6 @@ app.post("/join-session", async (req, res) => {
         await session.update({
           addPlayers: session.addPlayers - 1,
         });
-
-        // You might also want to associate the user who joined the session
-        // For example, if you have a User model and req.user.id is available:
-        //   await session.update({ addUserId: req.user.id });
-
-        // Handle success (e.g., redirect or send a success response)
         res.redirect("/sportsSessions"); // Redirect to the sport sessions page
       } else {
         // Handle the case where the session is not available or no additional players are allowed
@@ -470,7 +463,6 @@ app.post(
   }
 );
 
-// ... (existing code)
 app.get("/adminDashboard", connectEnsureLogin.ensureLoggedIn(), (req, res) => {
   if (req.isAuthenticated() && req.user.isAdmin) {
     // User is an admin, proceed to the admin dashboard
