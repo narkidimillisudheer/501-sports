@@ -325,7 +325,6 @@ app.post("/join-session", async (req, res) => {
         });
         res.redirect("/sportsSessions"); // Redirect to the sport sessions page
       } else {
-        // Handle the case where the session is not available or no additional players are allowed
         res.status(400).send("Unable to join the session.");
       }
     }
@@ -354,8 +353,6 @@ app.get(
           id: sportsIds,
         },
       });
-
-      // Render the EJS template with the joinedSports data
       console.log(joinedSports);
       res.render("joined-sports", { joinedSports, csrfToken: req.csrfToken() });
     } catch (error) {
@@ -377,7 +374,6 @@ app.get(
         where: {
           userId: userId,
           isCancelled: true,
-          // Optional: Add additional conditions as needed
         },
       });
 
@@ -401,8 +397,6 @@ app.get("/signout", (req, res, next) => {
     res.redirect("/check");
   });
 });
-
-//for creating the session
 
 // Admin signup route
 app.get("/admin/signup", (req, res) => {
