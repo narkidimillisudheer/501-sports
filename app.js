@@ -79,14 +79,6 @@ passport.deserializeUser((id, done) => {
       done(error, null);
     });
 });
-//for checking
-// app.get("/check", connectEnsureLogin.ensureLoggedIn(), (req, res) => {
-//   console.log("user name is:", req.user.id);
-//   res.render("homepage1", {
-//     csrfToken: req.csrfToken(),
-//     // userName: req.user.firstName,
-//   });
-// });
 //for signup
 app.get("/signup", (req, res) => {
   res.render("signup", { csrfToken: req.csrfToken() });
@@ -148,7 +140,7 @@ app.post(
 app.get("/check", connectEnsureLogin.ensureLoggedIn(), (req, res) => {
   res.render("homepage1", {
     csrfToken: req.csrfToken(),
-    // userName: req.user.firstName,
+    userName: req.user.firstName,
   });
 });
 //for creating the session
@@ -159,7 +151,6 @@ app.post(
     console.log("CSRF Token:", req.csrfToken());
     console.log("user name is:", req.user.id);
     try {
-      // Assuming you have a middleware that adds the user to req.user
       const userId = req.user.id;
 
       const user = await User.findByPk(userId);
@@ -189,12 +180,7 @@ app.post(
         userId: userId,
         isCancelled: false,
       });
-
-      // Associate the user with the sports session
-      // await user.addSports(sportsSession);
-
-      //   return res.status(201).json(sportsSession);
-      const message1 = "successfully sport session created";
+      const message1 = "successfully sport session created"; //for sending the notifications
       req.flash("error", message1);
       return res.redirect("/check");
     } catch (error) {
@@ -209,13 +195,9 @@ app.get(
   connectEnsureLogin.ensureLoggedIn(),
   async (req, res) => {
     try {
-      // Retrieve the user ID from the session
-
-      // Query to get sports sessions for the logged-in user
       const sportsSessions = await Sports.findAll();
       //for getting the session
-      const userId = req.user.id; // Assuming you get the user ID from the session
-
+      const userId = req.user.id; //user id of the user
       // Iterate through each sports session and check if the user has joined
       for (const session of sportsSessions) {
         const userHasJoined = await UserJoinedSessions.findOne({
@@ -255,7 +237,6 @@ app.get(
         where: {
           userId: userId,
           isCancelled: false,
-          // Optional: Add additional conditions as needed
         },
       });
 
@@ -303,7 +284,7 @@ app.post("/cancelMySession", async (req, res) => {
       await UserJoinedSessions.destroy({
         where: {
           sessionId: sessionId,
-          userId: userId, // Assuming you're using Passport and have user in req
+          userId: userId,
         },
       });
       res.redirect("/joined-sports"); // Redirect to the sport sessions page
